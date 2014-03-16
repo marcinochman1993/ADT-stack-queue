@@ -1,0 +1,8 @@
+/*!
+ * \mainpage Opis programu 
+ *
+ * Program testuje różne wersje kolejek i stosów. Zapisuje wyniki do folderu wyniki
+ * do plików CSV. Aby wygenerową z nich wykresy należy użyc skryptu napisanego w R.
+ * Będą one w folderze doc/Sprawozdanie/Wykresy.
+ *
+ */
