@@ -8,7 +8,7 @@
 #ifndef STANDARDPROBLEM_HPP_
 #define STANDARDPROBLEM_HPP_
 
-#include "Vector.hpp"
+#include <vector>
 #include "Problem.hpp"
 
 /*! \brief Klasa definiuje standardowy problem algorytmiczny
@@ -60,20 +60,20 @@ class StandardProblem: public Problem
 		/*! \brief Wektor przechowujący dane wejściowe
 		 *
 		 */
-		Vector<InputDataType> m_inputData;
+		std::vector<InputDataType> m_inputData;
 
 		/*! \brief Wektor przechowujący dane wyjściowe
 		 *
 		 *  Są to dane wygenerowane poprzez metodę compute()
 		 */
-		Vector<OutputDataType> m_outputData;
+		std::vector<OutputDataType> m_outputData;
 
 		/*! \brief Wektor przechowujący poprawne dane wyjściowe
 		 *
-		 *  Z tymi dany jest porównywane wyjście algorytmu i sprawdzana
+		 *  Z tymi danymi jest porównywane wyjście algorytmu i sprawdzana
 		 *  poprawność algorytmu.
 		 */
-		Vector<OutputDataType> m_correctOutputData;
+		std::vector<OutputDataType> m_correctOutputData;
 	private:
 		/*! \brief Pole przechowujące rozmiar problemu
 		 */

@@ -1,73 +1,47 @@
-#include <iostream>
-#include "LQueueAddProblem.hpp"
-#include "VQueueDoubleAddProblem.hpp"
-#include "VQueueIncAddProblem.hpp"
-#include "LStackAddProblem.hpp"
-#include "VStackDoubleAddProblem.hpp"
-#include "VStackIncAddProblem.hpp"
+ 
 #include "Benchmark.hpp"
-
+#include "QuickSortProblem.hpp"
+#include "MergeSortProblem.hpp"
+#include "HeapSortProblem.hpp"
 #include <fstream>
-
-
-/* UWAGA!!
- *
- * Program wykonuje się długo ze względu na testy kolejki/stosu
- * zaimplementowanej na podstawie tablicy ze strategią inkrementacyjną alokacji
- * pamięci
- */
 
 int main(int argc, char* argv[])
 {
-	Benchmark<LQueueAddProblem> benchLQueue;
-	Benchmark<VQueueDoubleAddProblem> benchVQueueDouble;
-	Benchmark<VQueueIncAddProblem> benchVQueueInc;
-	Benchmark<LStackAddProblem> benchLStack;
-	Benchmark<VStackDoubleAddProblem> benchVStackDouble;
-	Benchmark<VStackIncAddProblem> benchVStackInc;
-
-	std::ofstream benchLQueueOutputFile("wyniki/LQueue.csv");
-	std::ofstream benchVQueueDoubleOutputFile("wyniki/VQueueDouble.csv");
-	std::ofstream benchVQueueIncOutputFile("wyniki/VQueueInc.csv");
-	std::ofstream benchLStackOutputFile("wyniki/LStack.csv");
-	std::ofstream benchVStackDoubleOutputFile("wyniki/VStackDouble.csv");
-	std::ofstream benchVStackIncOutputFile("wyniki/VStackInc.csv");
-
-	if(!benchLQueueOutputFile || !benchVQueueDoubleOutputFile
-			|| !benchVQueueIncOutputFile || !benchLStackOutputFile
-			|| !benchVStackDoubleOutputFile || !benchVStackIncOutputFile)
+	std::ifstream randomInputFile("randomInput.txt");
+	std::ifstream quickSortWorstInputFile("worstQuickSortInput.txt");
+	if(!quickSortWorstInputFile || !randomInputFile)
 	{
-		std::cerr << "Nie mozna otworzyc plikow wyjsciowych\n";
+		std::cerr<<"Error while opening input files\n";
 		return -1;
 	}
-
-	std::ifstream benchDataInputFile("input.txt");
-
-	if(!benchDataInputFile)
+	std::ofstream mergeSortBenchOutput("output/mergeSortBench.csv");
+	std::ofstream quickSortBenchOutput("output/quickSortBench.csv");
+	std::ofstream quickSortWorstBenchOutput("output/quickSortWorstBench.csv");
+	std::ofstream heapSortBenchOutput("output/heapSortBench.csv");
+	if(!heapSortBenchOutput || !quickSortBenchOutput ||
+			!mergeSortBenchOutput || !quickSortWorstBenchOutput)
 	{
-		std::cerr << "Nie mozna otworzyc pliku wejsciowego\n";
+		std::cerr<<"Error while opening output files\n";
 		return -2;
 	}
-	benchLQueue.start(benchDataInputFile, benchDataInputFile);
-	benchLQueue.saveAsCSV(benchLQueueOutputFile);
-	benchDataInputFile.clear();
-	benchDataInputFile.seekg(0, std::ios::beg);
-	benchVQueueDouble.start(benchDataInputFile,benchDataInputFile);
-	benchVQueueDouble.saveAsCSV(benchVQueueDoubleOutputFile);
-	benchDataInputFile.clear();
-	benchDataInputFile.seekg(0, std::ios::beg);
-	benchVQueueInc.start(benchDataInputFile,benchDataInputFile);
-	benchVQueueInc.saveAsCSV(benchVQueueIncOutputFile);
-	benchDataInputFile.clear();
-	benchDataInputFile.seekg(0, std::ios::beg);
-	benchLStack.start(benchDataInputFile,benchDataInputFile);
-	benchLStack.saveAsCSV(benchLStackOutputFile);
-	benchDataInputFile.clear();
-	benchDataInputFile.seekg(0, std::ios::beg);
-	benchVStackDouble.start(benchDataInputFile,benchDataInputFile);
-	benchVStackDouble.saveAsCSV(benchVStackDoubleOutputFile);
-	benchDataInputFile.clear();
-	benchDataInputFile.seekg(0, std::ios::beg);
-	benchVStackInc.start(benchDataInputFile,benchDataInputFile);
-	benchVStackInc.saveAsCSV(benchVStackIncOutputFile);
+	std::cout<<"MergeSort...\n";
+	Benchmark<MergeSortProblem<double>> mergeSortBench;
+	mergeSortBench.start(randomInputFile,randomInputFile);
+	mergeSortBench.saveAsCSV(mergeSortBenchOutput);
+	randomInputFile.clear();
+	randomInputFile.seekg(0,std::ios::beg);
+	std::cout<<"QuickSort...\n";
+	Benchmark<QuickSortProblem<double>> quickSortAverageBench;
+	quickSortAverageBench.start(randomInputFile,randomInputFile);
+	quickSortAverageBench.saveAsCSV(quickSortBenchOutput);
+	randomInputFile.clear();
+	randomInputFile.seekg(0,std::ios::beg);
+	std::cout<<"HeapSort...\n";
+	Benchmark<HeapSortProblem<double>> heapSortBench;
+	heapSortBench.start(randomInputFile,randomInputFile);
+	heapSortBench.saveAsCSV(heapSortBenchOutput);
+	std::cout<<"QuickSort Worst.\n";
+	Benchmark<QuickSortProblem<double>> quickSortWorstBench;
+	quickSortWorstBench.start(quickSortWorstInputFile,quickSortWorstInputFile);
+	quickSortWorstBench.saveAsCSV(quickSortWorstBenchOutput);
 }

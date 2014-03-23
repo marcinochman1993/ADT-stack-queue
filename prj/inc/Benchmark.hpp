@@ -132,7 +132,6 @@ void Benchmark<ProblemType>::start(std::istream& isInputData,
 			t.start();
 			m_problem.compute();
 			t.stop();
-			auto end = std::chrono::high_resolution_clock::now();
 			m_problem.readOutData(isCorrectOutData);
 			if(!m_problem.isCorrect())
 				throw "Algorytm jest niepoprawny";

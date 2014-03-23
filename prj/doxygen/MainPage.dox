@@ -1,8 +1,8 @@
 /*!
  * \mainpage Opis programu 
  *
- * Program testuje różne wersje kolejek i stosów. Zapisuje wyniki do folderu wyniki
- * do plików CSV. Aby wygenerową z nich wykresy należy użyc skryptu napisanego w R.
- * Będą one w folderze doc/Sprawozdanie/Wykresy.
+ * Program testuje różne algorytmy sortowania tj. heap sort, quick sort, merge sort. Zapisuje wyniki do folderu wyniki
+ * do plików CSV. Aby wygenerowo z nich wykresy należy użyc skryptu napisanego w R.
+ * Będą one w folderze doc/Sprawozdanie/Wykresy. Pliki wejściowe można wygenerować za pomocą skryptu w tools/generateInput.py
  *
  */

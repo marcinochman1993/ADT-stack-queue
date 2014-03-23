@@ -31,6 +31,19 @@ class Vector
 				: m_data(nullptr), m_size(0), m_allocated(0)
 		{
 		}
+
+		/*!
+		 * \brief Konstruktor pozwalający przekopiować dane określone przez iteratory
+		 */
+		template <typename IteratorType>
+		Vector(IteratorType begin, IteratorType end);
+
+
+		/*!
+		 * \brief Pozwala na zamianę miejscami dwóch elementów o określonych indeksach
+		 *
+		 * Jeśli indeksy są niepoprawne wyrzuca wyjątek const char*
+		 */
 		void swapElements(unsigned int, unsigned int);
 		/*!
 		 * \brief Odwraca tablicę
@@ -205,6 +218,17 @@ private:
 	 */
 	unsigned int m_allocated;
 };
+
+
+template <typename Type>
+template <typename IteratorType>
+Vector<Type>::Vector(IteratorType begin, IteratorType end):m_size(0)
+{
+	reserve(std::distance(begin,end));
+	std::copy(begin,end,m_data);
+	m_size=m_allocated;
+}
+
 
 template<typename Type>
 void Vector<Type>::swapElements(unsigned int i, unsigned int j)

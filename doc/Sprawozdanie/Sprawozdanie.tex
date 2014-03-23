@@ -11,102 +11,113 @@
 \frenchspacing
 
 \author{Marcin Ochman}
-\title{ADT - kolejki i stosy, testowanie algorytmów dodawania}
+\title{Algorytmy sortowania: Quick Sort, Merge Sort, Heap Sort - porównanie wydajności. }
 
 \begin{document}
 \maketitle
 \section{Opis problemu}
+
+Sortowanie to jedna z najczęstszych czynności wykonywana przez obecne komputery.
+Ogromne bazy danych, z którymi programiści mają do czynienia wymagają od nich
+odpowiedniej wiedzy, jak szybko móc te dane umieścić w określonym porządku.
+Sortowanie w świecie algorytmów ma swoje szczególne miejsce. Algorytmy sortowania są
+dobrze przeanalizowane, znamy ich złożoności obliczeniowe, zapotrzebowanie na pamięć.
+Jednymi z najpopularniejszych są tytułowe:
+\begin{itemize}
+	\item sortowanie szybkie
+	\item sortowanie przez scalanie
+	\item sortowanie przez kopcowanie
+\end{itemize}
+Co ciekawe, wszystkie algorytmy wykorzystują w pewien sposób rekurencję.
+
+
+\section{Krótki opis algorytmów}
+
+W tej częsci przybliżę pokrótce każdy z algorytmów i postaram się podać jego mocne i
+słabe strony.
+
+\subsection{Quick Sort}
+
+Jest to obecnie najczęściej wykorzystywany algorytm sortowania. Średni czas wykonywania
+dla określonego rozmiaru problemu w porównaniu do innych algorytmów jest najmniejszy.
+Złożoność obliczeniowa w przypadku średnim wynosi $\mathcal{O}(n\log_2 n)$.
+Co ciekawe, przy pesymistycznym przypadku tj. dane posortowane odwrotnie, ma
+złożoność $\mathcal{O}(n^2)$. Pomimo tego, jest on jednym z najszybszych znanych 
+algorytmów sortowania poprzez porównywanie. Dane dzielonę są na dwie części, 
+w pierwszej części znajdują się elementy mniejsze od piwota, w drugiej większe. 
+Podziału tego dokonujemy poprzez funkcję zwyczajowo nazywaną partition. Następnie
+wywołujemy rekurencyjnie funkcję osobno dla dwóch podtablic.
+
+\subsection{Merge Sort}
+
+Koncepcja sortowania przez scalanie jest bardzo prosta. Jeśli mamy już posortowane dwie tablice,
+to jedynym problemem jest połączenie je w jedną, dużą tablicę. Należy odpowiednio porównywać
+elementy z jednej tablicy i z drugiej, a następnie dodawać do tablicy wynikowej. Pojawia się
+pytanie ,,jak otrzymać posortowane już dwie tablice''? Wystarczy scalać tablice o rozmiarze 1.
+Algorytm ma złożoność $\mathcal{O}(n\log_2 n )$. Wadą tego algorytmu jest zapotrzebowanie na
+dodatkową pamięć.
+
+\subsection{Heap Sort}
+
+Sortowanie przez kopcowanie, jak można się domyślić, wykorzystuje strukturę danych zwaną kopcem.
+Kopiec to drzewo binarne, w którym pomiędzy synem a ojcem występuje pewna relacja. Jeśli ojciec jest,
+większy od syna jest to kopiec typu maks, jeśli jest odwrotnie jest to kopiec typu min. Algorytm polega
+na zbudowaniu kopca, a następnie ściaganiu odpowiednich elementów. Złożoność obliczeniowa to 
+$\mathcal{O}(n\log_2 n)$
+
+\section{Wyniki testów wydajnościowych}
+
+Poniżej zostały przedstawione wykresy zależności czasu wykonywania od rozmiaru problemu.
+Algorytmy zostały zbadane dla tych samych zbiorów danych. Jedynie w przypadku analizy 
+sortowania szybkiego dla przypadku pesymistycznego użyto odrębnego zbioru.
+
+\subsection{Quick Sort - przypadek pesymistyczny}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./Wykresy/quickSortWorstBench}
+\caption{Zależność czasu wykonania od rozmiaru problemu - Quick Sort - przypadek pesymistyczny}
+\label{fig:quickSortWorstBench}
+\end{figure}
+
+\subsection{Quick Sort - przypadek średni}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./Wykresy/quickSortBench}
+\caption{Zależność czasu wykonania od rozmiaru problemu - Quick Sort - przypadek średni}
+\label{fig:quickSortBench}
+\end{figure}
+
+\subsection{Heap Sort}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./Wykresy/heapSortBench}
+\caption{Zależność czasu wykonania od rozmiaru problemu - Heap Sort}
+\label{fig:heapSortBench}
+\end{figure}
+
+\subsection{Merge Sort}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{./Wykresy/mergeSortBench}
+\caption{Zależność czasu wykonania od rozmiaru problemu - Merge Sort}
+\label{fig:mergeSortBench}
+\end{figure}
+
+
+\section{Wnioski i uwagi}
+
+\begin{itemize}
+	\item Aby pokazać złożoność algorytmów, w ostatnich trzech przypadkach użyłem
+		skali logarytmicznej dla osi odciętych
+	\item Widać, że quick sort jest bardzo wolny dla pesymistycznego przypadku
+	\item Quick Sort nie był najszybszym algorytmem w tym teście nawet dla przypadku średniego,
+	 przyczyną może być wybór piwota, który jest zawsze ostatnim elementem tablicy
+	 \item Widać, że te trzy algorytmy mają złożoność $\mathcal{O}(\log_2 n)$, dla
+	 sortowania szybkiego tyczy się to przypadku średniego
 	
-Kolejki i stosy to jedne z z najczęściej używanych abstrakcyjnych typów danych.
-Można je zaimplementować dwojako:
-\begin{itemize}
-	\item za pomocą listy
-	\item za pomocą tablicy
 \end{itemize}
-
-Tutaj pojawia się problem wyboru odpowiedniej implementacji. Główne pytanie przy jej wyborze, 
-które powinniśmy sobie zadać brzmi ,,na czym najbardziej nam zależy''. Lista ma tę przewagę, że 
-operacje dodawania na koniec i początek mają złożoność $\mathcal{O}(1)$. Wadą jest wymagana dodatkowa 
-pamięć przeznaczona na wskaźniki na następny element. Z tablicą jest nieco inaczej. 
-Złożoność obliczeniowa dodawania i usuwania z początku lub końca tablicy zależy od zastosowanej strategii 
-alokacji pamięci. Tyczy się to również wymagań pamięciowych.
-Najbardziej znanymi są:
-\begin{itemize}
-	\item strategia podwajania
-	\item strategia inkrementacji
-\end{itemize}
-W tym dokumencie chciałbym przedstawić różnice jakie powstają pomiędzy poszczególnymi
-implementacjami stosu oraz kolejki na podstawie operacji dodawania.
-
-\section{Wyniki pomiarów}
-Po przeprowadzeniu testów wyniki wydają się być zgodne z intuicją. Poniżej zostały one
-przedstawione na wykresach czasu działania od rozmiaru problemu.
-
-\subsection{Kolejka}
-
-Przetestowałem kolejkę zaimplementowanej na podstawie listy oraz tablicy. W przypadku tablicy
-przetestowałem dwie różne metody alokacji pamięci, o których wspomniałem wcześniej. Wyniki 
-prezentują się następująco:
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.7\linewidth]{./Wykresy/LQueue}
-\caption{Kolejka zaimplementowana na liście}
-\label{fig:LQueue}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.7\linewidth]{./Wykresy/VQueueDouble}
-\caption{Kolejka zaimplementowana na tablicy, metoda podwajania}
-\label{fig:VQueueDouble}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.7\linewidth]{./Wykresy/VQueueInc}
-\caption{Kolejka zaimplementowana na tablicy, metoda inkrementacji}
-\label{fig:VQueueInc}
-\end{figure}
-
-
-\subsection{Stos}
-
-Przetestowałem stosy zaimplementowane na podstawie listy oraz tablicy. W przypadku tablicy
-przetestowałem dwie różne metody alokacji pamięci, o których wspomniałem wcześniej. Wyniki 
-prezentują się następująco:
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{./Wykresy/LStack}
-	\caption{Stos zaimplementowany na liście}
-	\label{fig:LStack}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{./Wykresy/VStackDouble}
-	\caption{Stos zaimplementowany na tablicy, metoda podwajania}
-	\label{fig:VStackDouble}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.7\linewidth]{./Wykresy/VStackInc}
-	\caption{Stos zaimplementowany na tablicy, metoda inkrementacji}
-	\label{fig:VStackInc}
-\end{figure}
-
-\section{Wnioski}
-Na podstawie przeprowadzonych testów możemy wyciągnąć następujące wnioski:
-\begin{itemize}
-	\item Najgorszą implementacją jest implementacja na tablicy z alokacją inkrementacyjną
-	\item Widać, że wrzucenie $n$ elementów na stos/kolejkę przy alokacji inkrementacyjnej
-	 wiąże się ze złożonością $\mathcal{O}(n^2)$
-	\item Przy implementacji za pomocą listy widać, że jest to złożoność liniowa
-	\item Alokacja, w której podwaja się dostępny rozmiar w przybliżeniu jest liniowa,
-	chociaż można dostrzec zbiory punktów, które do tej prostej nie należą - dla takiego rozmiaru
-	przekopiowane musiały zostać dodatkowo wszystkie elementy
-\end{itemize}
-
 \end{document}

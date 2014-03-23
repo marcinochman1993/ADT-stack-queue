@@ -1,36 +1,20 @@
-Stos:
+na 3:
+babelkowe
+insertion
+heap 
+merge
 
-isEmpty
-size()
-push()
-pop()
-
-zdublować rozmiar przy dodawaniu elementu i odwrotnie dla 1/4 pojemności
-
-implementcja:
-
-*lista
-*tablica
+na 4:
+heap
+merge
+shell
+quicksort - obowiązkowo
 
 
-Kolejka:
+wybrać dwa z powyższych
 
-isEmpty()
-size()
-enqueue()
-dequeue()
-
-
-TESTY
-
-SPRAWOZDANIE
-
-Sprawdzić czas wykonania operacji wypełniania stosu/kolejki
-dla N={10,100,1000,10000}
-
-Tablica
-wersja o 1
-wersja 2x
-
-to samo dla listy
-EPS
+na 5 wybrać 3:
+merge
+quicksort
+introspektywne
+heap
