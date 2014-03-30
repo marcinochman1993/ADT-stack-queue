@@ -15,7 +15,7 @@ def GenerateInput(fileName="input.txt",problemSize=[10,100,1000,10000,20000,5000
                     for index in range(0,pSize):
                         file.write("\n{0}".format(input[index]))
 
-def GenerateWorstQuickSort(fileName="input.txt",problemSize=[10,100,1000,5000,10000,15000],
+def GenerateWorstQuickSort(fileName="input.txt",problemSize=[10,100,1000,5000,10000,15000,25000,40000,50000],
                            repeatNum=5):
     with open(fileName,'w') as file:
             file.write("{0}".format(repeatNum))

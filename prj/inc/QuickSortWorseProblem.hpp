@@ -1,21 +1,22 @@
 /*
- * QuickSortProblem.hpp
+ * QuickSortWorseProblem.hpp
  *
- *  Created on: Mar 19, 2014
+ *  Created on: 28 Mar 2014
  *      Author: mochman
  */
 
-#ifndef QUICKSORTPROBLEM_HPP_
-#define QUICKSORTPROBLEM_HPP_
+#ifndef QUICKSORTWORSEPROBLEM_HPP_
+#define QUICKSORTWORSEPROBLEM_HPP_
+
 
 #include "StandardProblem.hpp"
 #include "SortingAlgorithms.hpp"
 
 /*!
- * \brief Reprezentuje problem sortowania poprzez QuickSort
+ * \brief Reprezentuje problem sortowania poprzez QuickSort bez losowania piwota
  */
 template <typename DataType>
-class QuickSortProblem: public StandardProblem<DataType,DataType>
+class QuickSortWorseProblem: public StandardProblem<DataType,DataType>
 {
 public:
 	/*!
@@ -33,14 +34,14 @@ public:
 };
 
 template <typename DataType>
-void QuickSortProblem<DataType>::compute()
+void QuickSortWorseProblem<DataType>::compute()
 {
-	quickSort(StandardProblem<DataType,DataType>::m_outputData.begin(),
+	quickSortWorse(StandardProblem<DataType,DataType>::m_outputData.begin(),
 			StandardProblem<DataType,DataType>::m_outputData.end());
 }
 
 template <typename DataType>
-void QuickSortProblem<DataType>::readInData(std::istream& is)
+void QuickSortWorseProblem<DataType>::readInData(std::istream& is)
 {
 	for (unsigned int i = 1; i <= StandardProblem<DataType,DataType>::problemSize(); i++)
 	{
@@ -53,4 +54,4 @@ void QuickSortProblem<DataType>::readInData(std::istream& is)
 	}
 }
 
-#endif /* QUICKSORTPROBLEM_HPP_ */
+#endif /* QUICKSORTWORSEPROBLEM_HPP_ */

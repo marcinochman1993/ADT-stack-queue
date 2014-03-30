@@ -1,5 +1,5 @@
 fileNames<-c("heapSortBench","quickSortBench",
-      "mergeSortBench","quickSortWorstBench")
+      "mergeSortBench")
       
 for(fileName in fileNames)
 {
@@ -7,11 +7,16 @@ for(fileName in fileNames)
   epsFileName<-paste("../doc/Sprawozdanie/Wykresy",paste(fileName,"eps",sep="."),sep="/")
   csvData<-read.csv(file=csvFileName, sep=",", header=TRUE)
   postscript(file=epsFileName,width=10,height=5,horizontal=FALSE)
-  if(fileName=="quickSortWorstBench")
-  plot(csvData$Rozmiar,csvData$Czas_us,main=fileName,
-    ylab="Czas[us]",xlab="Rozmiar problemu")
-  else
     plot(csvData$Rozmiar,csvData$Czas_us,main=fileName,
     ylab="Czas[us]",xlab="Rozmiar problemu",log="x")
-  dev.off()
+ dev.off()
+  
 }
+
+  csvData<-read.csv(file="output/quickSortBetterWorstBench.csv", sep=",", header=TRUE)
+  csvData2<-read.csv(file="output/quickSortWorseWorstBench.csv", sep=",", header=TRUE)
+ postscript(file="../doc/Sprawozdanie/Wykresy/quickSortWorstBench.eps",width=10,height=5,horizontal=FALSE)
+  plot(csvData2$Rozmiar,csvData2$Czas_us,main="Worst Quick Sort",
+  ylab="Czas[us]",xlab="Rozmiar problemu",col="red")
+  points(csvData$Rozmiar,csvData$Czas_us)
+ dev.off()

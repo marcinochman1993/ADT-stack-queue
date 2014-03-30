@@ -1,6 +1,7 @@
  
 #include "Benchmark.hpp"
-#include "QuickSortProblem.hpp"
+#include "QuickSortWorseProblem.hpp"
+#include "QuickSortBetterProblem.hpp"
 #include "MergeSortProblem.hpp"
 #include "HeapSortProblem.hpp"
 #include <fstream>
@@ -16,10 +17,12 @@ int main(int argc, char* argv[])
 	}
 	std::ofstream mergeSortBenchOutput("output/mergeSortBench.csv");
 	std::ofstream quickSortBenchOutput("output/quickSortBench.csv");
-	std::ofstream quickSortWorstBenchOutput("output/quickSortWorstBench.csv");
+	std::ofstream quickSortWorseWorstBenchOutput("output/quickSortWorseWorstBench.csv");
+	std::ofstream quickSortBetterWorstBenchOutput("output/quickSortBetterWorstBench.csv");
 	std::ofstream heapSortBenchOutput("output/heapSortBench.csv");
 	if(!heapSortBenchOutput || !quickSortBenchOutput ||
-			!mergeSortBenchOutput || !quickSortWorstBenchOutput)
+			!mergeSortBenchOutput || !quickSortWorseWorstBenchOutput ||
+			!quickSortBetterWorstBenchOutput)
 	{
 		std::cerr<<"Error while opening output files\n";
 		return -2;
@@ -31,7 +34,7 @@ int main(int argc, char* argv[])
 	randomInputFile.clear();
 	randomInputFile.seekg(0,std::ios::beg);
 	std::cout<<"QuickSort...\n";
-	Benchmark<QuickSortProblem<double>> quickSortAverageBench;
+	Benchmark<QuickSortWorseProblem<double>> quickSortAverageBench;
 	quickSortAverageBench.start(randomInputFile,randomInputFile);
 	quickSortAverageBench.saveAsCSV(quickSortBenchOutput);
 	randomInputFile.clear();
@@ -40,8 +43,14 @@ int main(int argc, char* argv[])
 	Benchmark<HeapSortProblem<double>> heapSortBench;
 	heapSortBench.start(randomInputFile,randomInputFile);
 	heapSortBench.saveAsCSV(heapSortBenchOutput);
-	std::cout<<"QuickSort Worst.\n";
-	Benchmark<QuickSortProblem<double>> quickSortWorstBench;
-	quickSortWorstBench.start(quickSortWorstInputFile,quickSortWorstInputFile);
-	quickSortWorstBench.saveAsCSV(quickSortWorstBenchOutput);
+	std::cout<<"QuickSort Worse Worst...\n";
+	Benchmark<QuickSortWorseProblem<double>> quickSortWorseWorstBench;
+	quickSortWorseWorstBench.start(quickSortWorstInputFile,quickSortWorstInputFile);
+	quickSortWorseWorstBench.saveAsCSV(quickSortWorseWorstBenchOutput);
+	std::cout<<"QuickSort Better Worst...\n";
+	Benchmark<QuickSortBetterProblem<double>> quickSortBetterWorstBench;
+	quickSortWorstInputFile.clear();
+	quickSortWorstInputFile.seekg(0,std::ios::beg);
+	quickSortBetterWorstBench.start(quickSortWorstInputFile,quickSortWorstInputFile);
+	quickSortBetterWorstBench.saveAsCSV(quickSortBetterWorstBenchOutput);
 }

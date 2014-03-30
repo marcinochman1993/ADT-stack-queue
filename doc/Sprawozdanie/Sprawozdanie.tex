@@ -76,10 +76,10 @@ sortowania szybkiego dla przypadku pesymistycznego użyto odrębnego zbioru.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\linewidth]{./Wykresy/quickSortWorstBench}
-\caption{Zależność czasu wykonania od rozmiaru problemu - Quick Sort - przypadek pesymistyczny}
+\caption{Zależność czasu wykonania od rozmiaru problemu - Quick Sort - przypadek pesymistyczny. Kolor czarny - wersja z losowaniem piwotu,
+kolor czerwony - piwot na końcu tablicy}
 \label{fig:quickSortWorstBench}
 \end{figure}
-
 \subsection{Quick Sort - przypadek średni}
 
 \begin{figure}[H]
@@ -118,6 +118,13 @@ sortowania szybkiego dla przypadku pesymistycznego użyto odrębnego zbioru.
 	 przyczyną może być wybór piwota, który jest zawsze ostatnim elementem tablicy
 	 \item Widać, że te trzy algorytmy mają złożoność $\mathcal{O}(\log_2 n)$, dla
 	 sortowania szybkiego tyczy się to przypadku średniego
-	
+	 \item Widać, że w przypadku poprawionego algorytmu Quick Sort, złożoność obliczeniowa w
+	 przypadku pesymistycznym znacznie się poprawiła. Można również zaobserwować, że punkty
+	 dla tego samego rozmiaru nie są aż tak skupione. Jest to spowodowane losowaniem piwotu.
+	\item Doszukałem się dwóch powodów, które mogą powodować, że Quick 
+	Sort nie jest tak szybki. Metoda partition, którą oparłem na 
+	algorytmie podanym w książce ,,Wprowadzenie do algorytmów'' 
+	nie jest najszybsza, istnieją szybsze algorytmy podziału.
+	Po drugie, powodem mogą być iteratory i narzut jaki ze sobą niosą.
 \end{itemize}
 \end{document}

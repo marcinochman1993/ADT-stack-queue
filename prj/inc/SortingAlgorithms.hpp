@@ -14,15 +14,17 @@
  * \brief Jest to funkcja pomocnicza dla quickSort.
  *
  * Dzieli odpowiednio tablicę na część elementów mniejszych od piwotu
- * oraz część elementów większych od piwotu
+ * oraz część elementów większych od piwotu. Losuje piwot.
  *
  * \param begin o dostępie swobodnym na pierwszy element tablicy
  * \param end o dostępie swobodnym na pierwszy element za ostatnim elementem tablicy
  */
 template <typename Iterator>
-Iterator partition(Iterator begin, Iterator end)
+Iterator partitionBetter(Iterator begin, Iterator end)
 {
+	unsigned long SIZE=end-begin;
 	Iterator i=begin-1;
+	std::swap(*(begin+rand()%SIZE),*(end-1));
 	for(Iterator j=begin;j<end-1;j++)
 	{
 		if(*j<=*(end-1))
@@ -39,22 +41,67 @@ Iterator partition(Iterator begin, Iterator end)
 /*!
  * \brief Przeprowadza sortowanie przy pomocy algorytmu quickSort
  *
- * Elementy są sortowane w tablicy [begin,end)
+ * Elementy są sortowane w tablicy [begin,end). Wykorzystuje wersję partycjonowania
+ * z losowaniem piwota
  *
  * \param begin - iterator o dostępie swobodnym  do pierwszego elementu
  * \param end - iterator o dostępie swobodnym do pierwszego elementu za ostatnim elementem tablicy
  */
 template <typename Iterator>
-void quickSort(Iterator begin, Iterator end)
+void quickSortBetter(Iterator begin, Iterator end)
 {
 	if(begin<end-1)
 	{
-		Iterator q=partition(begin,end);
-		quickSort(begin,q);
-		quickSort(q,end);
+		Iterator q=partitionBetter(begin,end);
+		quickSortBetter(begin,q);
+		quickSortBetter(q,end);
 	}
 }
 
+/*!
+ * \brief Jest to funkcja pomocnicza dla quickSort.
+ *
+ * Dzieli odpowiednio tablicę na część elementów mniejszych od piwotu
+ * oraz część elementów większych od piwotu. NIE losuje piwota.
+ *
+ * \param begin o dostępie swobodnym na pierwszy element tablicy
+ * \param end o dostępie swobodnym na pierwszy element za ostatnim elementem tablicy
+ */
+template <typename Iterator>
+Iterator partitionWorse(Iterator begin, Iterator end)
+{
+	Iterator i=begin-1;
+	for(Iterator j=begin;j<end-1;j++)
+	{
+		if(*j<=*(end-1))
+		{
+			i++;
+			std::swap(*i,*j);
+		}
+	}
+	std::swap(*(i+1),*(end-1));
+	return i+1;
+}
+
+/*!
+ * \brief Przeprowadza sortowanie przy pomocy algorytmu quickSort
+ *
+ * Elementy są sortowane w tablicy [begin,end). Wykorzystuje wersję partycjonowania
+ * bez losowania piwota
+ *
+ * \param begin - iterator o dostępie swobodnym  do pierwszego elementu
+ * \param end - iterator o dostępie swobodnym do pierwszego elementu za ostatnim elementem tablicy
+ */
+template <typename Iterator>
+void quickSortWorse(Iterator begin, Iterator end)
+{
+	if(begin<end-1)
+	{
+		Iterator q=partitionWorse(begin,end);
+		quickSortWorse(begin,q);
+		quickSortWorse(q,end);
+	}
+}
 
 /*!
  * \brief Funkcja pomocnicza dla mergeSort
