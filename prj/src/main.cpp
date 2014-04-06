@@ -5,52 +5,38 @@
 #include "MergeSortProblem.hpp"
 #include "HeapSortProblem.hpp"
 #include <fstream>
+#include "Map.hpp"
 
 int main(int argc, char* argv[])
 {
-	std::ifstream randomInputFile("randomInput.txt");
-	std::ifstream quickSortWorstInputFile("worstQuickSortInput.txt");
-	if(!quickSortWorstInputFile || !randomInputFile)
+	std::string key;
+	double value;
+	Map<std::string, double>  map;
+	for(int i=0;i<5;i++)
 	{
-		std::cerr<<"Error while opening input files\n";
-		return -1;
+		std::cin>>key>>value;
+		map.add(key,value);
 	}
-	std::ofstream mergeSortBenchOutput("output/mergeSortBench.csv");
-	std::ofstream quickSortBenchOutput("output/quickSortBench.csv");
-	std::ofstream quickSortWorseWorstBenchOutput("output/quickSortWorseWorstBench.csv");
-	std::ofstream quickSortBetterWorstBenchOutput("output/quickSortBetterWorstBench.csv");
-	std::ofstream heapSortBenchOutput("output/heapSortBench.csv");
-	if(!heapSortBenchOutput || !quickSortBenchOutput ||
-			!mergeSortBenchOutput || !quickSortWorseWorstBenchOutput ||
-			!quickSortBetterWorstBenchOutput)
+
+	for(auto it=map.begin();it!=map.end();it++)
+		std::cout<<"Klucz:"<<it->m_key<<" Wartość: "<<it->m_value<<std::endl;
+
+	std::cout<<"Do usuniecia: ";
+	std::cin>>key;
+	map.remove(key);
+
+	for(auto it=map.begin();it!=map.end();it++)
+			std::cout<<"Klucz:"<<it->m_key<<" Wartość: "<<it->m_value<<std::endl;
+
+	std::cout<<"Klucz do wyświetlenia: ";
+	std::cin>>key;
+	try
 	{
-		std::cerr<<"Error while opening output files\n";
-		return -2;
+		std::cout<<map[key];
 	}
-	std::cout<<"MergeSort...\n";
-	Benchmark<MergeSortProblem<double>> mergeSortBench;
-	mergeSortBench.start(randomInputFile,randomInputFile);
-	mergeSortBench.saveAsCSV(mergeSortBenchOutput);
-	randomInputFile.clear();
-	randomInputFile.seekg(0,std::ios::beg);
-	std::cout<<"QuickSort...\n";
-	Benchmark<QuickSortWorseProblem<double>> quickSortAverageBench;
-	quickSortAverageBench.start(randomInputFile,randomInputFile);
-	quickSortAverageBench.saveAsCSV(quickSortBenchOutput);
-	randomInputFile.clear();
-	randomInputFile.seekg(0,std::ios::beg);
-	std::cout<<"HeapSort...\n";
-	Benchmark<HeapSortProblem<double>> heapSortBench;
-	heapSortBench.start(randomInputFile,randomInputFile);
-	heapSortBench.saveAsCSV(heapSortBenchOutput);
-	std::cout<<"QuickSort Worse Worst...\n";
-	Benchmark<QuickSortWorseProblem<double>> quickSortWorseWorstBench;
-	quickSortWorseWorstBench.start(quickSortWorstInputFile,quickSortWorstInputFile);
-	quickSortWorseWorstBench.saveAsCSV(quickSortWorseWorstBenchOutput);
-	std::cout<<"QuickSort Better Worst...\n";
-	Benchmark<QuickSortBetterProblem<double>> quickSortBetterWorstBench;
-	quickSortWorstInputFile.clear();
-	quickSortWorstInputFile.seekg(0,std::ios::beg);
-	quickSortBetterWorstBench.start(quickSortWorstInputFile,quickSortWorstInputFile);
-	quickSortBetterWorstBench.saveAsCSV(quickSortBetterWorstBenchOutput);
+	catch(const char* err)
+	{
+		std::cout<<"Nie znaleziono klucza\n";
+	}
+	return 0;
 }

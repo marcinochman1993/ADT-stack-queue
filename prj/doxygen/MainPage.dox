@@ -1,8 +1,15 @@
 /*!
  * \mainpage Opis programu 
  *
- * Program testuje różne algorytmy sortowania tj. heap sort, quick sort, merge sort. Zapisuje wyniki do folderu wyniki
- * do plików CSV. Aby wygenerowo z nich wykresy należy użyc skryptu napisanego w R.
- * Będą one w folderze doc/Sprawozdanie/Wykresy. Pliki wejściowe można wygenerować za pomocą skryptu w tools/generateInput.py
+ * Program testuje tablicę asocjacyjną. Najpierw wprowadzamy pięc par klucz-wartość (std::string - double), później można usunąć jeden element
+ * o podanym kluczu, następnie można wyświetlić wartość kryjącą się pod zadanym kluczem.
  *
+ * \section wybor_implementacji Wybór implementacji
+ *
+ * Rozważyłem wszystkie "za" i "przeciw" i zdecydowałem się na implementację tablicy asocjacyjnej przy pomocy wyszukiwania binarnego, tzn.
+ * dodaję elementy tak, że są one zawsze posortowane względem kluczy. Złożoność dodania elementu wynosi O(n) a dla pobrania
+ * wartości wynosi O(log(n)). Jest to gorszy czas dodawania w porównaniu np. do drzew czerwono-czarnych, które mają stały czas, ale ze względu
+ * na to, że będziemy zajmować się nimi w przyszłości odrzuciłem to rozwiązanie. Tablice haszujące zostały odrzucone również z tego
+ * samego powodu. Drzewa czerwono-czarne wydają się najlepszym wyborem jeśli chodzi o szybkość działania, dlatego są używane w popularnych biliotekach
+ * m.in. w STL w std::map. 
  */
