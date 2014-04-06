@@ -34,7 +34,7 @@ class Map
 
 		/*!
 		 * \brief Jest to typ iteratora
-		 * Zdefiniowany jako iterator listy
+		 * Zdefiniowany jako iterator wektora
 		 * przechowującej pary klucz-wartość
 		 */
 		typedef typename std::vector<Pair>::iterator iterator;
@@ -42,7 +42,7 @@ class Map
 		/*!
 		 * \brief Zdefiniowany typ stałego iteratora
 		 *
-		 * Jest to stały iterator listy przechowującej
+		 * Jest to stały iterator wektora przechowującej
 		 * pary klucz-wartość
 		 */
 		typedef typename std::vector<Pair>::const_iterator const_iterator;
