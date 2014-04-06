@@ -34,7 +34,7 @@ class Map
 
 		/*!
 		 * \brief Jest to typ iteratora
-		 * Zdefiniowany jako iterator wektora
+		 * Zdefiniowany jako iterator listy
 		 * przechowującej pary klucz-wartość
 		 */
 		typedef typename std::vector<Pair>::iterator iterator;
@@ -42,7 +42,7 @@ class Map
 		/*!
 		 * \brief Zdefiniowany typ stałego iteratora
 		 *
-		 * Jest to stały iterator wektora przechowującej
+		 * Jest to stały iterator listy przechowującej
 		 * pary klucz-wartość
 		 */
 		typedef typename std::vector<Pair>::const_iterator const_iterator;
@@ -154,7 +154,10 @@ class Map
 template <typename KeyType, typename ValueType>
 void Map<KeyType,ValueType>::add(KeyType key, ValueType value)
 {
-	iterator pairIt=find(key);
+	Pair pair;
+	pair.m_key=key;
+	iterator pairIt=std::lower_bound(begin(),end(),pair,[](const Pair& pair1,const Pair& pair2)
+			{ return pair1.m_key<pair2.m_key; } );
 	if(pairIt!=end() && pairIt->m_key==key)
 		pairIt->m_value=value;
 	else
@@ -166,8 +169,12 @@ auto Map<KeyType,ValueType>::find(KeyType key) -> iterator
 {
 	Pair pair;
 	pair.m_key=key;
-	return std::lower_bound(begin(),end(),pair,[](const Pair& pair1,const Pair& pair2)
+	iterator it=std::lower_bound(begin(),end(),pair,[](const Pair& pair1,const Pair& pair2)
 			{ return pair1.m_key<pair2.m_key; } );
+	if(it!=end())
+		if(it->m_key==key)
+			return it;
+	return end();
 }
 
 template <typename KeyType, typename ValueType>
@@ -175,8 +182,12 @@ auto Map<KeyType,ValueType>::find(KeyType key) const -> const_iterator
 {
 	Pair pair;
 	pair.m_key=key;
-	return std::lower_bound(cbegin(),cend(),pair,[](const Pair& pair1,const Pair& pair2)
+	const_iterator it=std::lower_bound(cbegin(),cend(),pair,[](const Pair& pair1,const Pair& pair2)
 			{ return pair1.m_key<pair2.m_key; } );
+	if(it!=cend())
+		if(it->m_key==key)
+			return it;
+	return cend();
 }
 
 template <typename KeyType, typename ValueType>
