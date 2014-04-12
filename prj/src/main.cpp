@@ -1,42 +1,55 @@
  
 #include "Benchmark.hpp"
-#include "QuickSortWorseProblem.hpp"
-#include "QuickSortBetterProblem.hpp"
-#include "MergeSortProblem.hpp"
-#include "HeapSortProblem.hpp"
+#include <iostream>
+#include "BinaryST.hpp"
+#include "HashTableGetProblem.hpp"
+#include "MapGetProblem.hpp"
+#include "BinarySTGetProblem.hpp"
+#include "Benchmark.hpp"
 #include <fstream>
-#include "Map.hpp"
 
 int main(int argc, char* argv[])
 {
-	std::string key;
-	double value;
-	Map<std::string, double>  map;
-	for(int i=0;i<5;i++)
-	{
-		std::cin>>key>>value;
-		map.add(key,value);
-	}
 
-	for(auto it=map.begin();it!=map.end();it++)
-		std::cout<<"Klucz:"<<it->m_key<<" Wartość: "<<it->m_value<<std::endl;
-
-	std::cout<<"Do usuniecia: ";
-	std::cin>>key;
-	map.remove(key);
-
-	for(auto it=map.begin();it!=map.end();it++)
-			std::cout<<"Klucz:"<<it->m_key<<" Wartość: "<<it->m_value<<std::endl;
-
-	std::cout<<"Klucz do wyświetlenia: ";
-	std::cin>>key;
 	try
 	{
-		std::cout<<map[key];
+		std::ifstream inputFileBig("inputBig.txt"), inputFileSmall("inputSmall.txt");
+		std::ofstream binOutputFile("output/binSTOutput.csv");
+		std::ofstream mapOutputFile("output/mapOutput.csv");
+		std::ofstream hashOutputFile("output/hashOutput.csv");
+		if(!inputFileBig || !inputFileSmall)
+		{
+			std::cerr<<"Blad otwierania plikow z danymi";
+			return -1;
+		}
+
+		if(!hashOutputFile || !mapOutputFile || !binOutputFile)
+		{
+			std::cerr<<"Blad otwierania plikow wyjsciowych";
+			return -2;
+		}
+
+		Benchmark<BinarySTGetProblem> binSTBench;
+		Benchmark<MapGetProblem> mapBench;
+		Benchmark<HashTableGetProblem> hashBench;
+		std::cout<<"Binary Tree\n";
+		binSTBench.start(inputFileBig,inputFileBig);
+		binSTBench.saveAsCSV(binOutputFile);
+
+		std::cout<<"Map\n";
+		mapBench.start(inputFileSmall,inputFileSmall);
+		mapBench.saveAsCSV(mapOutputFile);
+
+		inputFileBig.clear();
+		inputFileBig.seekg(0,std::ios::beg);
+
+		std::cout<<"Hash Table\n";
+		hashBench.start(inputFileBig,inputFileBig);
+		hashBench.saveAsCSV(hashOutputFile);
 	}
 	catch(const char* err)
 	{
-		std::cout<<"Nie znaleziono klucza\n";
+		std::cerr<<err;
 	}
 	return 0;
 }

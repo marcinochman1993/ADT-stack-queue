@@ -98,7 +98,15 @@ class Map
 		 */
 		unsigned long size() const { return m_pairs.size(); }
 
+		/*!
+		 * \brief Pozwala pobrać informację o ilości zarezerwowanej pamięci
+		 */
 		unsigned long reserved() const { return m_pairs.capacity(); }
+
+		/*!
+		 * \brief Pozwala zaalokwać większą pamięć na tablicę
+		 */
+		void reserve(unsigned long size) { m_pairs.reserve(size); }
 
 		/*!
 		 * \brief Pozwala przekonać się czy istnieje wpis pod podanym kluczem
@@ -128,6 +136,13 @@ class Map
 		 * \brief Pobiera końcowy stały iterator.
 		 */
 		const_iterator cend() const { return m_pairs.cend(); }
+
+
+		/*!
+		 * \brief Usuwa wszystko co jest w mapie
+		 */
+		void clear() { m_pairs.clear(); }
+
 	private:
 
 		/*!
