@@ -2,7 +2,7 @@ all: src/main.cpp obj/Timer.o obj/StringHash.o obj/HashTableGetProblem.o obj/Pai
 	obj/MapGetProblem.o obj/BinarySTGetProblem.o
 	g++ -std=c++11 -g -Iinc src/main.cpp obj/Timer.o obj/StringHash.o \
 	obj/HashTableGetProblem.o obj/PairSD.o obj/MapGetProblem.o \
-	obj/BinarySTGetProblem.o -o map
+	obj/BinarySTGetProblem.o -o graph
 	
 obj/StringHash.o: src/StringHash.cpp inc/StringHash.hpp
 	g++ -c -std=c++11 -g -Iinc src/StringHash.cpp -o obj/StringHash.o

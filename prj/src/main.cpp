@@ -1,55 +1,19 @@
  
 #include "Benchmark.hpp"
 #include <iostream>
-#include "BinaryST.hpp"
-#include "HashTableGetProblem.hpp"
-#include "MapGetProblem.hpp"
-#include "BinarySTGetProblem.hpp"
-#include "Benchmark.hpp"
 #include <fstream>
+#include "Graph.hpp"
+#include <ctime>
 
 int main(int argc, char* argv[])
 {
-
-	try
-	{
-		std::ifstream inputFileBig("inputBig.txt"), inputFileSmall("inputSmall.txt");
-		std::ofstream binOutputFile("output/binSTOutput.csv");
-		std::ofstream mapOutputFile("output/mapOutput.csv");
-		std::ofstream hashOutputFile("output/hashOutput.csv");
-		if(!inputFileBig || !inputFileSmall)
-		{
-			std::cerr<<"Blad otwierania plikow z danymi";
-			return -1;
-		}
-
-		if(!hashOutputFile || !mapOutputFile || !binOutputFile)
-		{
-			std::cerr<<"Blad otwierania plikow wyjsciowych";
-			return -2;
-		}
-
-		Benchmark<BinarySTGetProblem> binSTBench;
-		Benchmark<MapGetProblem> mapBench;
-		Benchmark<HashTableGetProblem> hashBench;
-		std::cout<<"Binary Tree\n";
-		binSTBench.start(inputFileBig,inputFileBig);
-		binSTBench.saveAsCSV(binOutputFile);
-
-		std::cout<<"Map\n";
-		mapBench.start(inputFileSmall,inputFileSmall);
-		mapBench.saveAsCSV(mapOutputFile);
-
-		inputFileBig.clear();
-		inputFileBig.seekg(0,std::ios::beg);
-
-		std::cout<<"Hash Table\n";
-		hashBench.start(inputFileBig,inputFileBig);
-		hashBench.saveAsCSV(hashOutputFile);
-	}
-	catch(const char* err)
-	{
-		std::cerr<<err;
-	}
+	Graph<int,int> graf;
+	for(unsigned int i=1;i<=4;i++)
+		graf.addVertice(i);
+	graf.addEdge(1,3,5);
+	graf.addEdge(3,2,2);
+	graf.addEdge(3,4,3);
+	graf.addEdge(4,1,4);
+	graf.dfs(4,[](int i){std::cout<<i<<std::endl;});
 	return 0;
 }

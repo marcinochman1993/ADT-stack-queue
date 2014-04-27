@@ -22,7 +22,7 @@ trzy różne rozwiązania:
 \begin{itemize}
 \item tablica mieszająca z dowiązaniem łańcuchowym
 \item użycie \textit{std::vector}, klucze są dodawane tak, że są zawsze posortowane
-\item użycie drzewa przeszukiwań binarnych 
+\item użycie drzewa przeszukiwań binarnych
 \end{itemize}
 
 Każde z tych rozwiązań ma swoje wady i zalety, jednak \underline{średni} czas znalezienia wartości
@@ -30,12 +30,18 @@ przechowywanej pod podanym kluczem wynosi $\mathcal{O}(lg(n))$ (przy braku koliz
 mieszającej, drzewo binarne bliskie zrównoważenia).
 
 
+\section{Sposób implementacji funkcji mieszającej dla łańcuchów znaków}
+
+Funkcja mieszająca zaimplementowana jest w bardzo prosty ale sprawdzony sposób.
+Każdy kod litery jest mnożony przez wagę, która jest odpowiednim indeksem litery w łańcuchu
+powiększonym o jeden. Wszystko jest sumowane, a następnie brana jest tylko reszta z dzielenia przez 10000.
+
 \section{Wyniki przeprowadzonych testów}
 
 Test polegał na zmierzeniu czasu dostępu do wartości, która została dodana na samym końcu.
-Ze względu na to, że implementacja na \textit{std::vector} dodaje element w czasie 
-liniowym, trwa to bardzo długo, dlatego ograniczyłem się w tym przypadku do 150000 
-elementów. Dla pozostałych tablic maksymalny rozmiar to 1,5 miliona elementów. Wyniki testów są 
+Ze względu na to, że implementacja na \textit{std::vector} dodaje element w czasie
+liniowym, trwa to bardzo długo, dlatego ograniczyłem się w tym przypadku do 150000
+elementów. Dla pozostałych tablic maksymalny rozmiar to 1,5 miliona elementów. Wyniki testów są
 przedstawione na poniższych wykresach
 
 \begin{figure}[H]
@@ -67,12 +73,12 @@ przedstawione na poniższych wykresach
 Na podstawie przeprowadzonych testów można wysnuć następujące wnioski:
 \begin{itemize}
 \item Widać, że czas dostępu nie zależy tylko od rozmiaru problemu, sposób uporządkowania
-danych oraz ich różnorodność jest również istotna, stąd duże rozbieżności w czasie dostępu 
+danych oraz ich różnorodność jest również istotna, stąd duże rozbieżności w czasie dostępu
 do elementu dla takiego samego rozmiaru danych.
 \item Tablica mieszająca, dla dużego rozmiaru ma gorszy czas od drzewa przeszukiwań binarnych,
 ponieważ występują kolizje i należy dodatkowo szukać w listach w czasie liniowym
-\item Implementacja na \textit{std::vector} i na drzewie przeszukiwań, co można 
-w przybliżeniu zaobserwować na wykresach, ma czas ~$\mathcal{O}(log(n)$, 
+\item Implementacja na \textit{std::vector} i na drzewie przeszukiwań, co można
+w przybliżeniu zaobserwować na wykresach, ma czas ~$\mathcal{O}(log(n)$,
 tablica mieszająca ma problemy dla liczniejszych zbiorów, występują kolizje, jest to złożoność
 $\mathcal{O}(nlog(n))$
 \item Implementacja na \textit{std::vector} nie nadaje się do przechowywania bardzo dużej ilości

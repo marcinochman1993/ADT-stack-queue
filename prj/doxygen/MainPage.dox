@@ -1,6 +1,0 @@
-/*!
- * \mainpage Opis programu 
- *
- * Program testuje wydajność odczytu z tablicy asocjacyjnej zaimplementowanej na trzy sposoby:
-   std::vector, drzewo BST, tablica mieszająca
- */
