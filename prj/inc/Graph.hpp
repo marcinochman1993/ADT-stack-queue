@@ -10,24 +10,82 @@
 
 #include <map>
 #include <set>
-
+#include <queue>
+#include <fstream>
+#include <stack>
+#include <list>
+#include <algorithm>
 /*!
  * \brief Klasa reprezentuje graf skierowany
  *
  * Graf jest zaimplementowany na podstawie list sąsiedztwa
  */
-template <typename VType, typename EType>
+template<typename VType, typename EType>
 class Graph
 {
 	public:
+		/*!
+		 * \brief Struktura pomocnicza przechowująca sąsiada wierzchołka oraz wagę połączenia
+		 */
 		struct Edge
 		{
-			VType neighbour;
-			EType weight;
-			bool operator<(const Edge& edge) const { return neighbour<edge.neighbour; }
-			bool operator>(const Edge& edge) const { return neighbour>edge.neighbour; }
-			bool operator!=(const Edge& edge) const { return neighbour!=edge.neighbour; }
-			bool operator==(const Edge& edge) const { return neighbour==edge.neighbour; }
+				/*!
+				 * \brief Sąsiad wierzchołka
+				 */
+				VType neighbour;
+
+				/*!
+				 * \brief Waga krawędzi
+				 */
+				EType weight;
+
+				/*!
+				 * \brief Przeciążony operator < dla struktury
+				 *
+				 * Porównuje sąsiadów struktury
+				 *
+				 * \param edge - druga struktura do porównania
+				 */
+				bool operator<(const Edge& edge) const
+				{
+					return neighbour < edge.neighbour;
+				}
+
+				/*!
+				 * \brief Przeciążony operator > dla struktury
+				 *
+				 * Porównuje sąsiadów struktury
+				 *
+				 * \param edge - druga struktura do porównania
+				 */
+				bool operator>(const Edge& edge) const
+				{
+					return neighbour > edge.neighbour;
+				}
+
+				/*!
+				 * \brief Przeciążony operator != dla struktury
+				 *
+				 * Porównuje sąsiadów struktury
+				 *
+				 * \param edge - druga struktura do porównania
+				 */
+				bool operator!=(const Edge& edge) const
+				{
+					return neighbour != edge.neighbour;
+				}
+
+				/*!
+				 * \brief Przeciążony operator równości dla struktury
+				 *
+				 * Porównuje sąsiadów struktury
+				 *
+				 * \param edge - druga struktura do porównania
+				 */
+				bool operator==(const Edge& edge) const
+				{
+					return neighbour == edge.neighbour;
+				}
 		};
 
 		/*!
@@ -46,7 +104,10 @@ class Graph
 		 *
 		 * \param v - wiezrchołek, który ma zostać usunięty z grafu
 		 */
-		void deleteVertice(const VType& v) { m_vertices.erase(v); }
+		void deleteVertice(const VType& v)
+		{
+			m_vertices.erase(v);
+		}
 
 		/*!
 		 * \brief Pozwala na połączenie dwóch wierzchołków tzn. tworzy krawędź
@@ -116,146 +177,444 @@ class Graph
 		bool contains(const VType& v1, const VType& v2) const;
 
 		/*!
-		 * \brief Przechodzi graf w głąb.
+		 * \brief Pozwala pobrać wagę krawędzi
 		 *
-		 * Jest wykonywany algorytm dfs, dla każdego odwiedzonego
-		 * wierzchołka wykonywana jest odpowiednia funkcja
-		 *
-		 * \param startVertice - wierzchołek początkowy, od którego algorytm startuje
-		 * \param function - obiekt funkcyjny, który może być wywołany z param. VType
+		 * Jeśli taka krawędź nie istnieje, jest wyrzucany wyjątek const char*
 		 */
-		template <typename F>
-		void dfs(const VType& startVertice, F function);
-	private:
+		const EType& weight(const VType& v1, const VType& v2) const;
+
 		/*!
 		 * \brief Przechodzi graf w głąb.
+		 *
 		 * Jest wykonywany algorytm dfs, dla każdego odwiedzonego
 		 * wierzchołka wykonywana jest odpowiednia funkcja
 		 *
 		 * \param startVertice - wierzchołek początkowy, od którego algorytm startuje
 		 * \param function - obiekt funkcyjny, który może być wywołany z param. VType
-		 * \param vertices - tablica asocjacyjna, w której zdefiniowane jest czy dany wierzcholek został już odwiedzony
+		 */
+		template<typename F>
+		void dfs(const VType& startVertice, F function);
+
+		/*!
+		 * \brief Przechodzi graf w głąb.
+		 *
+		 * Jest wykonywany algorytm dfs, jeśli zostanie napotkany wierzchołek
+		 * endVertice, kończone jest działanie algorytmu i odbudowana zostaje
+		 * ścieżka. Zwracana jest lista wierzchołków kolejno odwiedzanych na ścieżce.
+		 * Jeśli lista jest pusta to nie została znaleziona ścieżka do podanego wierzchołka.
+		 *
+		 * \param startVertice - wierzchołek początkowy, od którego algorytm startuje
+		 * \param endVertice - wierzchołek końcowy ścieżki
 		 *
 		 */
-		template <typename F>
-		void dfs(const VType& vertice, F function, std::map<VType, bool>& vertices);
+		std::list<VType> dfs(const VType& startVertice, const VType& endVertice);
+
+		/*!
+		 * \brief Przechodzi graf w szerz.
+		 *
+		 * Jest wykonywany algorytm bfs, dla każdego odwiedzonego
+		 * wierzchołka wykonywana jest odpowiednia funkcja
+		 *
+		 * \param startVertice - wierzchołek początkowy, od którego algorytm startuje
+		 * \param function - obiekt funkcyjny, który może być wywołany z param. VType
+		 */
+		template<typename F>
+		void bfs(const VType& startVertice, F function);
+
+		/*!
+		 * \brief Przechodzi graf w szerz.
+		 *
+		 * Jest wykonywany algorytm bfs, jeśli zostanie napotkany wierzchołek
+		 * endVertice, kończone jest działanie algorytmu i odbudowana zostaje
+		 * ścieżka. Zwracana jest lista wierzchołków kolejno odwiedzanych na ścieżce.
+		 * Jeśli lista jest pusta to nie została znaleziona ścieżka do podanego wierzchołka.
+		 *
+		 * \param startVertice - wierzchołek początkowy, od którego algorytm startuje
+		 * \param endVertice - wierzchołek końcowy ścieżki
+		 */
+		std::list<VType> bfs(const VType& startVertice, const VType& endVertice);
+
+		/*!
+		 * \brief Przechodzi graf metodą best first.
+		 *
+		 * Jest wykonywany algorytm best first search, dla każdego odwiedzonego
+		 * wierzchołka wykonywana jest odpowiednia funkcja
+		 *
+		 * \param startVertice - wierzchołek początkowy, od którego algorytm startuje
+		 * \param function - obiekt funkcyjny, który może być wywołany z param. VType
+		 */
+		template<typename F, typename Comp>
+		void bestFirstSearch(const VType& startVertice, F function,
+				Comp comparator);
+
+		/*!
+		 * \brief Przechodzi graf metodą best first
+		 * Jest wykonywany algorytm best first search, jeśli zostanie napotkany wierzchołek
+		 * endVertice, kończone jest działanie algorytmu i odbudowana zostaje
+		 * ścieżka. Zwracana jest lista wierzchołków kolejno odwiedzanych na ścieżce.
+		 * Jeśli lista jest pusta to nie została znaleziona ścieżka do podanego wierzchołka.
+		 *
+		 * \param startVertice - wierzchołek początkowy, od którego algorytm startuje
+		 * \param endVertice - wierzchołek końcowy ścieżki
+		 * \param comparator - komparator, który porównuje dla wybranego kryterium obiekty Edge
+		 */
+		template<typename Comp>
+		std::list<VType> bestFirstSearch(const VType& startVertice,
+				const VType& endVertice, Comp comparator);
+
+		/*!
+		 * \brief Na podstawie struktury grafu, generuje plik GV
+		 *
+		 * Plik gv służy do generowania plików, dzięki którym można wygenerować
+		 * pliki prezentujące graficznie podany graf.
+		 */
+		void genGVFile(std::ofstream& file) const;
+	private:
+
+		/*!
+		 * \brief Na podstawie odwiedzonych wierzchołków generuje ścieżkę.
+		 */
+		std::list<VType> genPath(const std::list<VType>& visitedVertList) const;
 
 		/*!
 		 * \brief Pole przechowujące informacje o wierzchołkach
 		 */
-		std::map<VType,std::set<Edge>> m_vertices;
+		std::map<VType, std::set<Edge>> m_vertices;
 
 };
 
-template <typename VType, typename EType>
-void Graph<VType,EType>::addVertice(const VType& v)
+template<typename VType, typename EType>
+void Graph<VType, EType>::addVertice(const VType& v)
 {
-	std::pair<VType,std::set<Edge>> vertice;
-	vertice.first=v;
-	auto it=m_vertices.insert(vertice);
+	std::pair<VType, std::set<Edge>> vertice;
+	vertice.first = v;
+	auto it = m_vertices.insert(vertice);
 	it.first->second.clear();
 }
 
-template <typename VType, typename EType>
-bool Graph<VType,EType>::addEdge(const VType& v1, const VType& v2, const EType& weight)
+template<typename VType, typename EType>
+bool Graph<VType, EType>::addEdge(const VType& v1, const VType& v2,
+		const EType& weight)
 {
-	auto itv1=m_vertices.find(v1),itv2=m_vertices.find(v2);
-	if(itv1!=m_vertices.end() && itv2!=m_vertices.end())
+	auto itv1 = m_vertices.find(v1), itv2 = m_vertices.find(v2);
+	if(itv1 != m_vertices.end() && itv2 != m_vertices.end())
 	{
-		Edge edge={v2,weight};
+		Edge edge = { v2, weight };
 		itv1->second.insert(edge);
 		return true;
 	}
 	return false;
 }
 
-template <typename VType, typename EType>
-void Graph<VType,EType>::deleteEdge(const VType& v1, const VType& v2)
+template<typename VType, typename EType>
+void Graph<VType, EType>::deleteEdge(const VType& v1, const VType& v2)
 {
-	auto itv1=m_vertices.find(v1),itv2=m_vertices.find(v2);
-	if(itv1!=m_vertices.end() && itv2!=m_vertices.end())
+	auto itv1 = m_vertices.find(v1), itv2 = m_vertices.find(v2);
+	if(itv1 != m_vertices.end() && itv2 != m_vertices.end())
 		itv1->second.erase(v2);
 }
 
-template <typename VType, typename EType>
-bool Graph<VType,EType>::isNeighbour(const VType& v1, const VType& v2) const
+template<typename VType, typename EType>
+bool Graph<VType, EType>::isNeighbour(const VType& v1, const VType& v2) const
 {
-	auto itv1=m_vertices.find(v1);
-	if(itv1==m_vertices.end())
+	auto itv1 = m_vertices.find(v1);
+	if(itv1 == m_vertices.end())
 		return false;
-	auto itv2=itv1->second.find(v2);
-	if(itv2!=itv1->second.end())
+	auto itv2 = itv1->second.find(v2);
+	if(itv2 != itv1->second.end())
 		return true;
 	return false;
 }
 
-template <typename VType, typename EType>
-bool Graph<VType,EType>::contains(const VType& v) const
+template<typename VType, typename EType>
+bool Graph<VType, EType>::contains(const VType& v) const
 {
-	auto it=m_vertices.find(v);
-	if(it!=m_vertices.end())
+	auto it = m_vertices.find(v);
+	if(it != m_vertices.end())
 		return true;
 	return false;
 }
 
-template <typename VType, typename EType>
-const std::set<typename Graph<VType,EType>::Edge>& Graph<VType,EType>::adj(const VType& v) const
+template<typename VType, typename EType>
+const std::set<typename Graph<VType, EType>::Edge>& Graph<VType, EType>::adj(
+		const VType& v) const
 {
-	auto itv=m_vertices.find(v);
-	if(itv!=m_vertices.end())
+	auto itv = m_vertices.find(v);
+	if(itv != m_vertices.end())
 		return itv->second;
 	throw "Vertice not found";
 }
 
-template <typename VType, typename EType>
-std::set<typename Graph<VType,EType>::Edge>& Graph<VType,EType>::adj(const VType& v)
+template<typename VType, typename EType>
+std::set<typename Graph<VType, EType>::Edge>& Graph<VType, EType>::adj(
+		const VType& v)
 {
-	auto itv=m_vertices.find(v);
-	if(itv!=m_vertices.end())
+	auto itv = m_vertices.find(v);
+	if(itv != m_vertices.end())
 		return itv->second;
 	throw "Vertice not found";
 }
 
-template <typename VType, typename EType>
-bool Graph<VType,EType>::contains(const VType& v1, const VType& v2) const
+template<typename VType, typename EType>
+bool Graph<VType, EType>::contains(const VType& v1, const VType& v2) const
 {
-	auto itv1=m_vertices.find(v1);
+	auto itv1 = m_vertices.find(v1);
 	Edge edge;
-	edge.neighbour=v2;
-	auto itv2=itv1->second.find(edge);
-	if(itv1!=m_vertices.end() && itv2!=itv1->second.end())
+	edge.neighbour = v2;
+	auto itv2 = itv1->second.find(edge);
+	if(itv1 != m_vertices.end() && itv2 != itv1->second.end())
 		return true;
 	return false;
 }
 
-template <typename VType, typename EType>
-template <typename F>
-void Graph<VType,EType>::dfs(const VType& startVertice, F function)
+template<typename VType, typename EType>
+const EType& Graph<VType, EType>::weight(const VType& v1, const VType& v2) const
 {
-	std::map<VType,bool> vertices;
-	for(auto it=m_vertices.begin();it!=m_vertices.end();it++)
-	{
-		std::pair<VType,bool> pair={it->first,false};
-		vertices.insert(pair);
-	}
-	dfs(startVertice, function, vertices);
+	if(!contains(v1, v2))
+		throw "Edge not found";
+	Edge temp;
+	temp.neighbour = v2;
+	auto it = adj(v1).find(temp);
+	return it->weight;
 }
 
-template <typename VType, typename EType>
-template <typename F>
-void Graph<VType,EType>::dfs(const VType& vertice, F function,
-		std::map<VType, bool>& vertices)
+template<typename VType, typename EType>
+template<typename F>
+void Graph<VType, EType>::dfs(const VType& startVertice, F function)
 {
-	if(!contains(vertice))
+	if(!contains(startVertice))
 		throw "Vertice not found";
-	if(!vertices[vertice])
+	std::stack<VType> stack;
+	stack.push(startVertice);
+	std::map<VType, bool> visited;
+	for (auto it = m_vertices.begin(); it != m_vertices.end(); it++)
 	{
-		function(vertice);
-		vertices[vertice]=true;
+		std::pair<VType, bool> pair = { it->first, false };
+		visited.insert(pair);
 	}
-	std::set<Edge>& neighbours=adj(vertice);
-	for(auto it=neighbours.begin();it!=neighbours.end();it++)
-	  if(!vertices[it->neighbour])
-	    dfs(it->neighbour,function,vertices);
+	while (!stack.empty())
+	{
+		VType vertice = stack.top();
+		stack.pop();
+		if(!visited[vertice])
+		{
+			visited[vertice] = true;
+			function(vertice);
+			std::set<Edge>& neighbours = adj(vertice);
+			for (auto it = neighbours.begin(); it != neighbours.end(); it++)
+				if(!visited[it->neighbour])
+					stack.push(it->neighbour);
+		}
+	}
+}
+
+template<typename VType, typename EType>
+std::list<VType> Graph<VType, EType>::dfs(const VType& startVertice,
+		const VType& endVertice)
+{
+	if(!contains(startVertice) || !contains(endVertice))
+		return std::list<VType>();
+	std::stack<VType> stack;
+	stack.push(startVertice);
+	std::map<VType, bool> visited;
+	for (auto it = m_vertices.begin(); it != m_vertices.end(); it++)
+	{
+		std::pair<VType, bool> pair = { it->first, false };
+		visited.insert(pair);
+	}
+	std::list<VType> visitedVertList;
+	while (!stack.empty() && !visited[endVertice])
+	{
+		VType vertice = stack.top();
+		stack.pop();
+		if(!visited[vertice])
+		{
+			visited[vertice] = true;
+			visitedVertList.push_front(vertice);
+			std::set<Edge>& neighbours = adj(vertice);
+			for (auto it = neighbours.begin();
+					it != neighbours.end() && !visited[endVertice]; it++)
+				if(!visited[it->neighbour])
+					stack.push(it->neighbour);
+		}
+	}
+	return genPath(visitedVertList);
+}
+
+template<typename VType, typename EType>
+template<typename F>
+void Graph<VType, EType>::bfs(const VType& startVertice, F function)
+{
+	if(!contains(startVertice))
+		throw "Vertice not found";
+	std::priority_queue<VType> queue;
+	queue.push(startVertice);
+	std::map<VType, bool> visited;
+	for (auto it = m_vertices.begin(); it != m_vertices.end(); it++)
+	{
+		std::pair<VType, bool> pair = { it->first, false };
+		visited.insert(pair);
+	}
+	visited[startVertice] = true;
+	function(startVertice);
+	while (!queue.empty())
+	{
+		VType vertice = queue.top();
+		queue.pop();
+		std::set<Edge>& neighbours = adj(vertice);
+		for (auto it = neighbours.begin(); it != neighbours.end(); it++)
+			if(!visited[it->neighbour])
+			{
+				queue.push(it->neighbour);
+				visited[it->neighbour] = true;
+				function(vertice);
+			}
+	}
+}
+
+template<typename VType, typename EType>
+std::list<VType> Graph<VType, EType>::bfs(const VType& startVertice,
+		const VType& endVertice)
+{
+	if(!contains(startVertice))
+		throw "Vertice not found";
+	std::priority_queue<VType> queue;
+	queue.push(startVertice);
+	std::map<VType, bool> visited;
+	for (auto it = m_vertices.begin(); it != m_vertices.end(); it++)
+	{
+		std::pair<VType, bool> pair = { it->first, false };
+		visited.insert(pair);
+	}
+	std::list<VType> visitedVertList;
+	visited[startVertice] = true;
+	visitedVertList.push_front(startVertice);
+	while (!queue.empty() && !visited[endVertice])
+	{
+		VType vertice = queue.top();
+		queue.pop();
+		std::set<Edge>& neighbours = adj(vertice);
+		for (auto it = neighbours.begin();
+				it != neighbours.end() && !visited[endVertice]; it++)
+			if(!visited[it->neighbour])
+			{
+				queue.push(it->neighbour);
+				visited[it->neighbour] = true;
+				visitedVertList.push_front(it->neighbour);
+			}
+	}
+	return genPath(visitedVertList);
+}
+
+template<typename VType, typename EType>
+template<typename F, typename Comp>
+void Graph<VType, EType>::bestFirstSearch(const VType& startVertice, F function,
+		Comp comparator)
+{
+	if(!contains(startVertice))
+		throw "Start vertice not found";
+	std::stack<VType> stack;
+	stack.push(startVertice);
+	std::map<VType, bool> visited;
+	for (auto it = m_vertices.begin(); it != m_vertices.end(); it++)
+	{
+		std::pair<VType, bool> pair = { it->first, false };
+		visited.insert(pair);
+	}
+	std::list<VType> visitedVertList;
+	while (!stack.empty())
+	{
+		VType vertice = stack.top();
+		stack.pop();
+		if(!visited[vertice])
+		{
+			visited[vertice] = true;
+			function(vertice);
+			visitedVertList.push_front(vertice);
+			std::set<Edge, Comp> neighbours(adj(vertice).begin(), adj(vertice).end(),
+					comparator);
+			for (auto it = neighbours.begin(); it != neighbours.end(); it++)
+				if(!visited[it->neighbour])
+					stack.push(it->neighbour);
+		}
+	}
+}
+
+template<typename VType, typename EType>
+template<typename Comp>
+std::list<VType> Graph<VType, EType>::bestFirstSearch(const VType& startVertice,
+		const VType& endVertice, Comp comparator)
+{
+	if(!contains(startVertice) || !contains(endVertice))
+		return std::list<VType>();
+	std::stack<VType> stack;
+	stack.push(startVertice);
+	std::map<VType, bool> visited;
+	for (auto it = m_vertices.begin(); it != m_vertices.end(); it++)
+	{
+		std::pair<VType, bool> pair = { it->first, false };
+		visited.insert(pair);
+	}
+	std::list<VType> visitedVertList;
+	while (!stack.empty() && !visited[endVertice])
+	{
+		VType vertice = stack.top();
+		stack.pop();
+		if(!visited[vertice])
+		{
+			visited[vertice] = true;
+			visitedVertList.push_front(vertice);
+			std::set<Edge, Comp> neighbours(adj(vertice).begin(), adj(vertice).end(),
+					comparator);
+			for (auto it = neighbours.begin();
+					it != neighbours.end() && !visited[endVertice]; it++)
+				if(!visited[it->neighbour])
+					stack.push(it->neighbour);
+		}
+	}
+	return genPath(visitedVertList);
+}
+
+template<typename VType, typename EType>
+void Graph<VType, EType>::genGVFile(std::ofstream& file) const
+{
+	file << "digraph \n{\n" << "\trankdir=LR;\n";
+	for (auto verticeIt = m_vertices.begin(); verticeIt != m_vertices.end();
+			verticeIt++)
+	{
+		for (auto neighbourIt = verticeIt->second.begin();
+				neighbourIt != verticeIt->second.end(); neighbourIt++)
+		{
+			file << '\t' << verticeIt->first << " -> " << neighbourIt->neighbour
+					<< "[label = " << neighbourIt->weight << "];\n";
+		}
+	}
+	file << '}';
+}
+
+template<typename VType, typename EType>
+std::list<VType> Graph<VType, EType>::genPath(
+		const std::list<VType>& visitedVertList) const
+{
+	if(std::find(visitedVertList.begin(), visitedVertList.end(),
+			visitedVertList.front()) == visitedVertList.end())
+		return std::list<VType>();
+	std::list<VType> path;
+	path.push_front(visitedVertList.front());
+	VType tempVertice = visitedVertList.front();
+	for (auto it = visitedVertList.begin(); it != visitedVertList.end(); it++)
+	{
+		auto itNext = it;
+		itNext++;
+		if(itNext != visitedVertList.end())
+		{
+			if(contains(*itNext, tempVertice))
+			{
+				path.push_front(*itNext);
+				tempVertice = *itNext;
+			}
+		}
+	}
+	return path;
 }
 #endif /* GRAPH_HPP_ */

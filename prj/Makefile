@@ -23,4 +23,4 @@ obj/PairSD.o: inc/PairSD.hpp src/PairSD.cpp
 	g++ -c -std=c++11 -g -Iinc src/PairSD.cpp -o obj/PairSD.o
 
 clean:
-	rm -rf obj/* map
+	rm -rf obj/* graph
