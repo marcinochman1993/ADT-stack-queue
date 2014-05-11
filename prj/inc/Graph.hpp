@@ -263,6 +263,17 @@ class Graph
 				const VType& endVertice, Comp comparator);
 
 		/*!
+		 * \brief Wyszukuje ścieżkę za pomocą algorytmu A*
+		 *
+		 * \param startVertice - wierzchołek początkowy
+		 * \param endVertice - wierzchołek końcowy
+		 * \param heuristicFun - funkcja heurystyczna, pobiera jeden argument - wierzchołek
+		 */
+		template <typename HFunction>
+		std::list<VType> aStar(const VType& startVertice, const VType& endVertice,
+				HFunction heuristicFun);
+
+		/*!
 		 * \brief Na podstawie struktury grafu, generuje plik GV
 		 *
 		 * Plik gv służy do generowania plików, dzięki którym można wygenerować
@@ -272,9 +283,58 @@ class Graph
 	private:
 
 		/*!
-		 * \brief Na podstawie odwiedzonych wierzchołków generuje ścieżkę.
+		 * \brief Struktura pomocnicza dla algorytmu A*
 		 */
-		std::list<VType> genPath(const std::list<VType>& visitedVertList) const;
+		struct VertFV
+		{
+			/*!
+			 * \brief Określa aktualny wierzchołek
+			 */
+			VType vertice;
+
+			/*!
+			 * \brief Wartość funkcji f
+			 */
+			EType fFunctionValue;
+
+			/*!
+			 * \brief Wartość funkcji f
+			 */
+			EType gFunctionValue;
+
+			/*!
+			 * \brief Operator większości
+			 *
+			 * Porównuje wartości funkcji f
+			 */
+			bool operator>(const VertFV& vertFV) const { return fFunctionValue>vertFV.fFunctionValue; }
+
+			/*!
+			 * \brief Operator mniejszości
+			 *
+			 * Porównuje wartości funkcji f
+			 */
+			bool operator<(const VertFV& vertFV) const { return fFunctionValue<vertFV.fFunctionValue; }
+
+			/*
+			 * \brief Operator równości
+			 *
+			 * Porównuje aktualne wierzchołki
+			 */
+			bool operator==(const VertFV& vertFV) const { return vertice==vertFV.vertice; }
+
+			/*
+			 * \brief Operator różności
+			 *
+			 * Porównuje aktualne wierzchołki
+			 */
+			bool operator!=(const VertFV& vertFV) const { return vertice!=vertFV.vertice; }
+		};
+
+		/*!
+		 * \brief Na podstawie rodziców wierzchołków generuje ścieżkę
+		 */
+		std::list<VType> retracePath(std::map<VType,VType>& parents, const VType& beginVert, const VType& endVert) const;
 
 		/*!
 		 * \brief Pole przechowujące informacje o wierzchołkach
@@ -422,7 +482,7 @@ std::list<VType> Graph<VType, EType>::dfs(const VType& startVertice,
 		std::pair<VType, bool> pair = { it->first, false };
 		visited.insert(pair);
 	}
-	std::list<VType> visitedVertList;
+	std::map<VType,VType> parents;
 	while (!stack.empty() && !visited[endVertice])
 	{
 		VType vertice = stack.top();
@@ -430,15 +490,17 @@ std::list<VType> Graph<VType, EType>::dfs(const VType& startVertice,
 		if(!visited[vertice])
 		{
 			visited[vertice] = true;
-			visitedVertList.push_front(vertice);
 			std::set<Edge>& neighbours = adj(vertice);
 			for (auto it = neighbours.begin();
 					it != neighbours.end() && !visited[endVertice]; it++)
 				if(!visited[it->neighbour])
+				{
 					stack.push(it->neighbour);
+					parents[it->neighbour]=vertice;
+				}
 		}
 	}
-	return genPath(visitedVertList);
+	return retracePath(parents,startVertice,endVertice);
 }
 
 template<typename VType, typename EType>
@@ -478,7 +540,7 @@ std::list<VType> Graph<VType, EType>::bfs(const VType& startVertice,
 {
 	if(!contains(startVertice))
 		throw "Vertice not found";
-	std::priority_queue<VType> queue;
+	std::queue<VType> queue;
 	queue.push(startVertice);
 	std::map<VType, bool> visited;
 	for (auto it = m_vertices.begin(); it != m_vertices.end(); it++)
@@ -486,12 +548,11 @@ std::list<VType> Graph<VType, EType>::bfs(const VType& startVertice,
 		std::pair<VType, bool> pair = { it->first, false };
 		visited.insert(pair);
 	}
-	std::list<VType> visitedVertList;
+	std::map<VType,VType> parents;
 	visited[startVertice] = true;
-	visitedVertList.push_front(startVertice);
 	while (!queue.empty() && !visited[endVertice])
 	{
-		VType vertice = queue.top();
+		VType vertice = queue.front();
 		queue.pop();
 		std::set<Edge>& neighbours = adj(vertice);
 		for (auto it = neighbours.begin();
@@ -500,10 +561,10 @@ std::list<VType> Graph<VType, EType>::bfs(const VType& startVertice,
 			{
 				queue.push(it->neighbour);
 				visited[it->neighbour] = true;
-				visitedVertList.push_front(it->neighbour);
+				parents[it->neighbour]=vertice;
 			}
 	}
-	return genPath(visitedVertList);
+	return retracePath(parents,startVertice,endVertice);
 }
 
 template<typename VType, typename EType>
@@ -555,7 +616,7 @@ std::list<VType> Graph<VType, EType>::bestFirstSearch(const VType& startVertice,
 		std::pair<VType, bool> pair = { it->first, false };
 		visited.insert(pair);
 	}
-	std::list<VType> visitedVertList;
+	std::map<VType,VType> parents;
 	while (!stack.empty() && !visited[endVertice])
 	{
 		VType vertice = stack.top();
@@ -563,16 +624,18 @@ std::list<VType> Graph<VType, EType>::bestFirstSearch(const VType& startVertice,
 		if(!visited[vertice])
 		{
 			visited[vertice] = true;
-			visitedVertList.push_front(vertice);
 			std::set<Edge, Comp> neighbours(adj(vertice).begin(), adj(vertice).end(),
 					comparator);
 			for (auto it = neighbours.begin();
 					it != neighbours.end() && !visited[endVertice]; it++)
 				if(!visited[it->neighbour])
+				{
 					stack.push(it->neighbour);
+					parents[it->neighbour]=vertice;
+				}
 		}
 	}
-	return genPath(visitedVertList);
+	return retracePath(parents,startVertice,endVertice);
 }
 
 template<typename VType, typename EType>
@@ -592,29 +655,73 @@ void Graph<VType, EType>::genGVFile(std::ofstream& file) const
 	file << '}';
 }
 
-template<typename VType, typename EType>
-std::list<VType> Graph<VType, EType>::genPath(
-		const std::list<VType>& visitedVertList) const
+template <typename VType, typename EType>
+std::list<VType> Graph<VType, EType>::retracePath(std::map<VType,VType>& parents,
+		const VType& beginVert, const VType& endVert) const
 {
-	if(std::find(visitedVertList.begin(), visitedVertList.end(),
-			visitedVertList.front()) == visitedVertList.end())
-		return std::list<VType>();
+	VType temp=endVert;
 	std::list<VType> path;
-	path.push_front(visitedVertList.front());
-	VType tempVertice = visitedVertList.front();
-	for (auto it = visitedVertList.begin(); it != visitedVertList.end(); it++)
+	while(temp!=beginVert)
 	{
-		auto itNext = it;
-		itNext++;
-		if(itNext != visitedVertList.end())
+		path.push_front(temp);
+		temp=parents[temp];
+	}
+	path.push_front(beginVert);
+	return path;
+}
+
+template <typename VType, typename EType>
+template <typename HFunction>
+std::list<VType> Graph<VType, EType>::aStar(const VType& startVertice, const VType& endVertice,
+		HFunction heuristicFun)
+{
+	std::set<VType> closedSet;
+	std::list<VertFV> openSet;
+	VertFV tempVFV={startVertice,0,0};
+	openSet.push_back(tempVFV);
+	std::map<VType,VType> parents;
+	while(openSet.size()>0)
+	{
+		VertFV currVertice=*std::min_element(openSet.begin(),openSet.end());openSet.pop_front();
+		if(currVertice.vertice==endVertice)
+			return retracePath(parents,startVertice,currVertice.vertice);
+		tempVFV.vertice=currVertice.vertice;
+		openSet.remove(tempVFV);
+		closedSet.insert(currVertice.vertice);
+		for(const auto& it:adj(currVertice.vertice))
 		{
-			if(contains(*itNext, tempVertice))
+			if(closedSet.find(it.neighbour)==closedSet.end())//nie ma w closedSet
 			{
-				path.push_front(*itNext);
-				tempVertice = *itNext;
+				EType tentGScore=currVertice.gFunctionValue+weight(currVertice.vertice,it.neighbour);
+				bool tentIsBetter=false;
+				tempVFV.vertice=it.neighbour;
+				auto neighbourIt=std::find(openSet.begin(),openSet.end(),tempVFV);
+				if(neighbourIt==openSet.end())//nie ma w openSet
+				{
+					openSet.push_back(tempVFV);					tentIsBetter=true;
+				}
+				else
+					if(tentGScore<neighbourIt->gFunctionValue)
+						tentIsBetter=true;
+				if(tentIsBetter)
+				{
+					if(neighbourIt==openSet.end())
+					{
+						parents[openSet.back().vertice]=currVertice.vertice;
+						openSet.back().gFunctionValue=tentGScore;
+						openSet.back().fFunctionValue=tentGScore+heuristicFun(openSet.back().vertice);
+					}
+					else
+					{
+						parents[neighbourIt->vertice]=currVertice.vertice;
+						neighbourIt->gFunctionValue=tentGScore;
+						neighbourIt->fFunctionValue=tentGScore+heuristicFun(neighbourIt->vertice);
+					}
+				}
 			}
 		}
 	}
-	return path;
+	return std::list<VType>();
 }
+
 #endif /* GRAPH_HPP_ */
