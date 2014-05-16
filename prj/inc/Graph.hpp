@@ -118,6 +118,7 @@ class Graph
 		 *
 		 * \param v1 - wierzchołek początkowy krawędzi
 		 * \param v2 - wierzchołek końcowy krawędzi
+		 * \param weight - waga połączenia
 		 *
 		 */
 		bool addEdge(const VType& v1, const VType& v2, const EType& weight);
@@ -242,6 +243,7 @@ class Graph
 		 *
 		 * \param startVertice - wierzchołek początkowy, od którego algorytm startuje
 		 * \param function - obiekt funkcyjny, który może być wywołany z param. VType
+		 * \param comparator - komparator porównujący krawędzie
 		 */
 		template<typename F, typename Comp>
 		void bestFirstSearch(const VType& startVertice, F function,

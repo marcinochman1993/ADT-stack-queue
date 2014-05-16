@@ -2,101 +2,36 @@
 #include <iostream>
 #include <fstream>
 #include "Graph.hpp"
-
+#include "Simplex.hpp"
 
 int main(int argc, char* argv[])
 {
-	Graph<int, int> graph1,graph2;
-	for (unsigned int i = 1; i <= 7; i++)
-		graph1.addVertice(i);
-	for (unsigned int i = 1; i <= 5; i++)
-			graph2.addVertice(i);
-	graph1.addEdge(1, 2, 3);
-	graph1.addEdge(2, 3, 3);
-	graph1.addEdge(3, 4, 5);
-	graph1.addEdge(2, 5, 3);
-	graph1.addEdge(5, 6, 4);
-	graph1.addEdge(6, 7, 6);
-	graph1.addEdge(1, 5, 5);
-	graph1.addEdge(5, 3, 5);
-	graph1.addEdge(7, 1, 1);
-	graph1.addEdge(6, 4, 1);
-	graph1.addEdge(7, 4, 0);
-	graph2.addEdge(1,2,10);
-	graph2.addEdge(2,3,1);
-	graph2.addEdge(3,4,4);
-	graph2.addEdge(4,3,6);
-	graph2.addEdge(5,4,2);
-	graph2.addEdge(2,5,3);
-	graph2.addEdge(5,3,9);
-	graph2.addEdge(4,1,7);
-	graph2.addEdge(1,5,5);
-	typedef Graph<int, int>::Edge Edge;
-	std::cout<<"Graf nr 1:\n\n";
-	std::cout<<"A*:\n";
-	std::list<int> path = graph1.aStar(1, 4,[](int x) { return 0; });
-	for (auto it = path.begin(); it != path.end(); it++)
-		if(*it != 4)
-			std::cout << *it << "->";
-		else
-			std::cout << *it << std::endl;
-
-	std::cout<<"DFS:\n";
-	path=graph1.dfs(1,4);
-	for (auto it = path.begin(); it != path.end(); it++)
-		if(*it != 4)
-			std::cout << *it << "->";
-		else
-			std::cout << *it << std::endl;
-
-	std::cout<<"BFS:\n";
-	path=graph1.bfs(1,4);
-	for (auto it = path.begin(); it != path.end(); it++)
-		if(*it != 4)
-			std::cout << *it << "->";
-		else
-			std::cout << *it << std::endl;
-
-	std::cout<<"Best First Search:\n";
-	path=graph1.bestFirstSearch(1,4,[](const Edge& e1, const Edge& e2) { return e1.weight>e2.weight;});
-	for (auto it = path.begin(); it != path.end(); it++)
-		if(*it != 4)
-			std::cout << *it << "->";
-		else
-			std::cout << *it << std::endl;
-
-	std::cout<<"\nGraf 2:\n\n";
-
-	std::cout<<"A*:\n";
-	path = graph2.aStar(1, 3,[](int x) { return 0; });
-	for (auto it = path.begin(); it != path.end(); it++)
-		if(*it != 3)
-			std::cout << *it << "->";
-		else
-			std::cout << *it << std::endl;
-
-	std::cout<<"DFS:\n";
-	path=graph2.dfs(1,3);
-	for (auto it = path.begin(); it != path.end(); it++)
-		if(*it != 3)
-			std::cout << *it << "->";
-		else
-			std::cout << *it << std::endl;
-
-	std::cout<<"BFS:\n";
-	path=graph2.bfs(1,3);
-	for (auto it = path.begin(); it != path.end(); it++)
-		if(*it != 3)
-			std::cout << *it << "->";
-		else
-			std::cout << *it << std::endl;
-
-	std::cout<<"Best First Search:\n";
-	path=graph2.bestFirstSearch(1,3,[](const Edge& e1, const Edge& e2) { return e1.weight>e2.weight;});
-	for (auto it = path.begin(); it != path.end(); it++)
-		if(*it != 3)
-			std::cout << *it << "->";
-		else
-			std::cout << *it << std::endl;
+	std::cout<<"******************************\n";
+	Constraint<double> c11, c12, c13;
+	const int PROBLEMSIZE1 = 2, PROBLEMSIZE2 = 3;
+	c11.size(PROBLEMSIZE1);c12.size(PROBLEMSIZE1);c13.size(PROBLEMSIZE1);
+	c11.setCoeff(0, 1);c11.setCoeff(1, 0);c11.setB(4);
+	c12.setCoeff(0, 0);c12.setCoeff(1, 2);c12.setB(12);
+	c13.setCoeff(0, 3);c13.setCoeff(1, 2);c13.setB(18);
+	std::vector<Constraint<double>> constraints1 = { c11, c12, c13 };
+	ObjectiveFunction<double> fun1 = { 3000, 5000 };
+	std::cout<<"PROBLEM nr 1:\n\nMaksymalizacja: "<<fun1<<std::endl<<"Przy ograniczeniach:\n"
+			<<c11<<std::endl<<c12<<std::endl<<c13<<std::endl<<std::endl;
+	Matrix<double> simplexTab(constraints1.size() + 1,
+			fun1.size() + constraints1.size() + 2);
+	FunctionArguments<double> solution1 = simplex(constraints1, fun1);
+	std::cout <<"Rozwiazanie: "<< solution1 << "\nWartosc funkcji: "<<fun1.calculate(solution1)
+					<<"\n\n******************************\n";
+	Constraint<double> c21,c22;
+	c21.size(PROBLEMSIZE2);c22.size(PROBLEMSIZE2);
+	c21.setCoeff(0,2);c21.setCoeff(1,3);c21.setCoeff(2,2);c21.setB(1000);
+	c22.setCoeff(0,1);c22.setCoeff(1,1);c22.setCoeff(2,2);c22.setB(800);
+	ObjectiveFunction<double> fun2 = {7,8,10};
+	std::vector<Constraint<double>> constraints2={c21,c22};
+	std::cout<<"PROBLEM nr 2:\n\nMaksymalizacja: "<<fun2<<std::endl<<"Przy ograniczeniach:\n"
+			<<c21<<std::endl<<c22<<std::endl<<std::endl;
+	FunctionArguments<double> solution2 = simplex(constraints2, fun2);
+	std::cout <<"Rozwiazanie: "<< solution2 <<"\nWartosc funkcji: "
+			<<fun2.calculate(solution2)<<"\n\n******************************\n";
 	return 0;
 }
