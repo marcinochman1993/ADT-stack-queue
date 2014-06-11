@@ -1,28 +1,28 @@
-all: src/main.cpp obj/Timer.o obj/StringHash.o obj/HashTableGetProblem.o obj/PairSD.o \
-	obj/MapGetProblem.o obj/BinarySTGetProblem.o
-	g++ -std=c++11 -g -Iinc src/main.cpp obj/Timer.o obj/StringHash.o \
-	obj/HashTableGetProblem.o obj/PairSD.o obj/MapGetProblem.o \
-	obj/BinarySTGetProblem.o -o simplex
-	
-obj/StringHash.o: src/StringHash.cpp inc/StringHash.hpp obj/
-	g++ -c -std=c++11 -g -Iinc src/StringHash.cpp -o obj/StringHash.o
-	
-obj/HashTableGetProblem.o: src/HashTableGetProblem.cpp inc/HashTableGetProblem.hpp obj/
-	g++ -c -std=c++11 -g -Iinc src/HashTableGetProblem.cpp -o obj/HashTableGetProblem.o
-	
-obj/MapGetProblem.o: src/MapGetProblem.cpp inc/MapGetProblem.hpp obj/
-	g++ -c -std=c++11 -g -Iinc src/MapGetProblem.cpp -o obj/MapGetProblem.o
-	
-obj/BinarySTGetProblem.o: src/BinarySTGetProblem.cpp inc/BinarySTGetProblem.hpp obj/
-	g++ -c -std=c++11 -g -Iinc src/BinarySTGetProblem.cpp -o obj/BinarySTGetProblem.o
+all: src/main.cpp obj/PlanszaWarcaby.o obj/Wspolrzedna.o obj/PlanszaWarcaby.o obj/Warcaby.o obj/Pole.o obj/Sciezka.o \
+	obj/WarcabyGUI.o obj/
+	g++ -g -Iinc src/main.cpp obj/Wspolrzedna.o obj/PlanszaWarcaby.o obj/Warcaby.o \
+	obj/Pole.o obj/Sciezka.o obj/WarcabyGUI.o -lSDL -lSDL_ttf -o warcaby -std=c++11
 
-obj/Timer.o: inc/Timer.hpp src/Timer.cpp obj/
-	g++ -c -std=c++11 -g -Iinc src/Timer.cpp -o obj/Timer.o
-	
-obj/PairSD.o: inc/PairSD.hpp src/PairSD.cpp obj/
-	g++ -c -std=c++11 -g -Iinc src/PairSD.cpp -o obj/PairSD.o
+obj/WarcabyGUI.o: inc/WarcabyGUI.hpp src/WarcabyGUI.cpp obj/
+	g++ -c -g -Iinc src/WarcabyGUI.cpp -o obj/WarcabyGUI.o -std=c++11
 
+obj/Pole.o: inc/Pole.hpp src/Pole.cpp obj/
+	g++ -c -g -Iinc src/Pole.cpp -o obj/Pole.o -std=c++11
+
+obj/Warcaby.o: inc/Warcaby.hpp src/Warcaby.cpp obj/
+	g++ -c -g -Iinc src/Warcaby.cpp -o obj/Warcaby.o -std=c++11
+
+obj/PlanszaWarcaby.o: inc/PlanszaWarcaby.hpp src/PlanszaWarcaby.cpp obj/
+	g++ -c -g -Iinc src/PlanszaWarcaby.cpp -o obj/PlanszaWarcaby.o -std=c++11
+	
+obj/Wspolrzedna.o: inc/Wspolrzedna.hpp src/Wspolrzedna.cpp obj/
+	g++ -c -g -Iinc src/Wspolrzedna.cpp -o obj/Wspolrzedna.o -std=c++11
+	
+obj/Sciezka.o: inc/Sciezka.hpp src/Sciezka.cpp obj/
+	g++ -c -g -Iinc src/Sciezka.cpp -o obj/Sciezka.o -std=c++11
+	
 obj/:
 	mkdir obj/
-clean:
-	rm -rf obj simplex
+
+clean: 
+	rm -rf obj/* warcaby
